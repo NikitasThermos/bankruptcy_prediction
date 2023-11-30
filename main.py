@@ -2,6 +2,8 @@ import os
 os.environ['TF_CPP_MIN_LOG_LEVEL'] = '1' 
 import pandas as pd 
 
+from preprocessing import show_dataset_stats
+
 
 
 def load_csv():
@@ -10,7 +12,7 @@ def load_csv():
 
 def main(): 
     df = load_csv() 
-    print(df.head())
+    show_dataset_stats(df)
 
 if __name__ == '__main__': 
     main()
