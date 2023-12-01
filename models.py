@@ -1,4 +1,5 @@
 from sklearn.linear_model import SGDClassifier
+from sklearn.ensemble import RandomForestClassifier
 from sklearn.model_selection import GridSearchCV
 
 def sgd(X_train, y_train, X_val):
@@ -13,4 +14,15 @@ def sgd(X_train, y_train, X_val):
     print('SGD best parameters:')
     print(grid_search.best_params_)
 
+    return grid_search.predict(X_val)
+
+def random_forest(X_train, y_train, X_val): 
+    forest_clf = RandomForestClassifier(random_state=42, criterion='entropy')
+    param_grid = {'n_estimators':[4, 5, 6], 'min_samples_split':[6, 8, 10, 12]}
+    grid_search = GridSearchCV(forest_clf, param_grid, 
+                                cv=3, scoring='accuracy',
+                                return_train_score=True, verbose=True)
+    grid_search.fit(X_train, y_train)
+    print('Random Forest best parameters:')
+    print(grid_search.best_params_)
     return grid_search.predict(X_val)

@@ -4,7 +4,7 @@ import pandas as pd
 import numpy as np
 
 from preprocessing import show_dataset_stats, preprocess_dataset
-from models import sgd
+from models import sgd, random_forest
 
 
 def load_csv():
@@ -16,6 +16,7 @@ def main():
     show_dataset_stats(df)
     X_train, X_val, y_train, y_val = preprocess_dataset(df)
     sdg_pred = sgd(X_train, y_train, X_val) 
+    rand_forest = random_forest(X_train, y_train, X_val)
     
 if __name__ == '__main__': 
     main()
