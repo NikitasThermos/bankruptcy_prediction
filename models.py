@@ -46,7 +46,7 @@ def dense_network(X_train, y_train, X_val, y_val):
 
     early_stopping_cb = tf.keras.callbacks.EarlyStopping(patience=5,
                                                          restore_best_weights=True)
-    callabacks = [early_stopping_cb]
+    callbacks = [early_stopping_cb]
 
     optimizer = tf.keras.optimizers.Adam(learning_rate=0.001,
                                          beta_1=0.9, beta_2=0.999)
@@ -56,6 +56,6 @@ def dense_network(X_train, y_train, X_val, y_val):
     
     history = model.fit(train_dataset, epochs=30,
                         validation_data=val_dataset,
-                        callabacks=callabacks)
+                        callbacks=callbacks)
 
     return model.predict(X_val)
