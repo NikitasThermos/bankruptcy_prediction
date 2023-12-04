@@ -58,4 +58,4 @@ def dense_network(X_train, y_train, X_val, y_val):
                         validation_data=val_dataset,
                         callbacks=callbacks)
 
-    return model.predict(X_val)
+    return [1 if p > 0.5 else 0 for p in model.predict(X_val)]
