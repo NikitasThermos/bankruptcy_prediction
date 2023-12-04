@@ -20,6 +20,10 @@ def parse_arguments(sys_argv):
                         choices=['all','SGD', 'RF', 'DNN'],
                         default='all',
                         type=str)
+    parser.add_argument('--log_data_stats',
+                        help='Log statistics for training dataset',
+                        default=False,
+                        type=bool)
     return parser.parse_args(sys_argv)
 
 def load_csv():
@@ -40,8 +44,11 @@ def log_results(y_val, **predictions):
 
 def main(): 
     args = parse_arguments(sys.argv[1:])
-    df = load_csv() 
-    show_dataset_stats(df)
+
+    df = load_csv()
+    if args.log_data_stats: 
+        show_dataset_stats(df)
+
     X_train, X_val, y_train, y_val = preprocess_dataset(df)
     predictions = dict()
 
