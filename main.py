@@ -12,6 +12,7 @@ from preprocessing import show_dataset_stats, preprocess_dataset
 from models import sgd, random_forest, dense_network
 
 def parse_arguments(sys_argv): 
+    print('Parsing arguments...')
     parser = argparse.ArgumentParser() 
 
     parser.add_argument('--model',
@@ -22,10 +23,11 @@ def parse_arguments(sys_argv):
     return parser.parse_args(sys_argv)
 
 def load_csv():
+    print('loading dataset csv...')
     return pd.read_csv('companydata.csv')
 
 def log_results(y_val, **predictions):
-    print('Logging results for the evaluation dataset')
+    print('Logging results for the evaluation dataset:')
     results = []
     for model, pred in predictions.items(): 
         print(f'Confusion Matrix for {model} :')
@@ -56,7 +58,7 @@ def main():
             predictions['Dense Network'] = dense_network(X_train, y_train, X_val, y_val)
         case _:
             raise Exception(f'model:{args.model} not found')
-    log_results(**predictions)
+    log_results(y_val, **predictions)
     
 if __name__ == '__main__': 
     main()

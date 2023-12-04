@@ -6,6 +6,7 @@ import tensorflow as tf
 tf.random.set_seed(42)
 
 def sgd(X_train, y_train, X_val):
+    print('Running SGD grid search...')
     sgd_clf = SGDClassifier(random_state=42)
     param_grid = {'alpha':[0.0003, 0.0005, 0.0007], 'tol':[1e-4, 1e-3, 1e-2],
                   'epsilon': [0.05, 0.1, 0.2]}
@@ -20,6 +21,7 @@ def sgd(X_train, y_train, X_val):
     return grid_search.predict(X_val)
 
 def random_forest(X_train, y_train, X_val): 
+    print('Running Random Forest grid search...')
     forest_clf = RandomForestClassifier(random_state=42, criterion='entropy')
     param_grid = {'n_estimators':[4, 5, 6], 'min_samples_split':[6, 8, 10, 12]}
     grid_search = GridSearchCV(forest_clf, param_grid, 
