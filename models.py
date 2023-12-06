@@ -45,6 +45,7 @@ def dense_network(X_train, y_train, X_val, y_val):
     ])
 
     early_stopping_cb = tf.keras.callbacks.EarlyStopping(patience=5,
+                                                         monitor='val_auc',
                                                          restore_best_weights=True)
     callbacks = [early_stopping_cb]
 
@@ -52,7 +53,7 @@ def dense_network(X_train, y_train, X_val, y_val):
                                          beta_1=0.9, beta_2=0.999)
     model.compile(loss="binary_crossentropy",
                   optimizer=optimizer,
-                  metrics=["accuracy"])
+                  metrics=[tf.keras.metrics.Recall(), tf.keras.metrics.Precision(), tf.keras.metrics.AUC(name='auc')])
     
     history = model.fit(train_dataset, epochs=30,
                         validation_data=val_dataset,
