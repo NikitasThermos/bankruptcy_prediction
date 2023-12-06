@@ -40,7 +40,7 @@ def dense_network(X_train, y_train, X_val, y_val):
     val_dataset = val_dataset.batch(32)
 
     model = tf.keras.Sequential([
-        tf.keras.layers.Dense(64, activation='relu', input_shape=(64,)),
+        tf.keras.layers.Dense(128, activation='relu', input_shape=(64,)),
         tf.keras.layers.Dense(1, activation='sigmoid')
     ])
 
@@ -49,7 +49,7 @@ def dense_network(X_train, y_train, X_val, y_val):
                                                          restore_best_weights=True)
     callbacks = [early_stopping_cb]
 
-    optimizer = tf.keras.optimizers.Adam(learning_rate=0.001,
+    optimizer = tf.keras.optimizers.Adam(learning_rate=0.0001,
                                          beta_1=0.9, beta_2=0.999)
     model.compile(loss="binary_crossentropy",
                   optimizer=optimizer,
