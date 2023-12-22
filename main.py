@@ -25,10 +25,7 @@ def parse_arguments(sys_argv):
                         default=False,
                         type=bool)
     return parser.parse_args(sys_argv)
-"""
-def load_csv(path):
-    return pd.read_csv(path)
-"""
+
 def log_results(y_val, **predictions):
     print('Logging results for the evaluation dataset:')
     results = []
@@ -52,8 +49,8 @@ def main():
         show_dataset_stats(train_df)
     
     X_train, y_train  = preprocess_dataset(train_df, 'train')
+    X_test = preprocess_dataset(X_test, 'test')
 
-    #X_train, X_val, y_train, y_val = preprocess_dataset(train_df)
     predictions = dict()
 
     match args.model:

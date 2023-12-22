@@ -1,13 +1,46 @@
+import numpy as np 
+from scipy.stats import randint, uniform
+
 from sklearn.linear_model import SGDClassifier
+from sklearn.impute import KNNImputer
+from sklearn.preprocessing import RobustScaler
 from sklearn.ensemble import RandomForestClassifier
-from sklearn.model_selection import GridSearchCV
+from sklearn.model_selection import GridSearchCV, RandomizedSearchCV
+
+from imblearn.over_sampling import ADASYN
+from imblearn.pipeline import make_pipeline
 
 import tensorflow as tf
 tf.random.set_seed(42)
 
 def sgd(X_train, y_train, X_val):
-    print('Running SGD grid search...')
-    sgd_clf = SGDClassifier(random_state=42)
+    full_pipeline = make_pipeline(KNNImputer(weights='distance'), RobustScaler(), ADASYN(random_state=42),
+                              SGDClassifier(penalty='elasticnet', random_state=42))
+    
+    param_distribs = {'knnimputer__n_neighbors': randint(low=10, high=500),
+                  'adasyn__sampling_strategy': uniform(loc=0.01, scale=0.99),
+                  'adasyn__n_neighbors': randint(low=3, high=50),
+                  'sgdclassifier__class_weight': [None, 'balanced', {1: np.random.uniform(low=0.1, high=50.0)}],
+                  'sgdclassifier__alpha': uniform(loc=0.0001, scale=3),
+                  'sgdclassifier__loss': ['hinge', 'modified_huber', 'squared_hinge'],
+                  'sgdclassifier__l1_ratio': uniform(loc=0.1, scale=0.9),
+                  'sgdclassifier__learning_rate': ['optimal', 'invscaling', 'adaptive'],
+                  'sgdclassifier__eta0': uniform(loc=0.0001, scale=10),
+
+    }
+    random_search = RandomizedSearchCV(
+        full_pipeline,
+        param_distributions=param_distribs,
+        n_iter=20,
+        scoring='f1',
+        cv=3,
+        random_state=42
+    )
+    random_search.fit(X_train, y_train)
+    print(f'SGD best parameters:\n {random_search.best_params_}')
+
+    """
+   
     param_grid = {'alpha':[0.0001,0.0003, 0.0005, 0.0007], 'tol':[1e-4, 5e-4, 1e-3, 5e-3, 1e-2],
                   'epsilon': [0.01 ,0.03,0.05, 0.1, 0.2]}
     grid_search = GridSearchCV(sgd_clf, param_grid, cv=5, 
@@ -19,6 +52,7 @@ def sgd(X_train, y_train, X_val):
     print(grid_search.best_params_)
 
     return grid_search.predict(X_val)
+    """
 
 def random_forest(X_train, y_train, X_val): 
     print('Running Random Forest grid search...')
