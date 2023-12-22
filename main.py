@@ -48,11 +48,12 @@ def main():
     X_test = pd.read_csv('test_data.csv')
     y_test = pd.read_csv('test_labels.csv', header=None)
     
-    
     if args.log_data_stats: 
         show_dataset_stats(train_df)
+    
+    X_train, y_train  = preprocess_dataset(train_df, 'train')
 
-    X_train, X_val, y_train, y_val = preprocess_dataset(train_df)
+    #X_train, X_val, y_train, y_val = preprocess_dataset(train_df)
     predictions = dict()
 
     match args.model:
