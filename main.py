@@ -58,18 +58,18 @@ def main():
 
     match args.model:
         case 'SGD':
-            predictions['SGD'] = sgd(X_train, y_train, X_val) 
+            predictions['SGD'] = sgd(X_train, y_train, X_test) 
         case 'RF':
-            predictions['Random Forest'] = random_forest(X_train, y_train, X_val)
+            predictions['Random Forest'] = random_forest(X_train, y_train, X_test)
         case 'DNN':
-            predictions['Dense Network'] = dense_network(X_train, y_train, X_val, y_val)
+            predictions['Dense Network'] = dense_network(X_train, y_train, X_test, y_test)
         case 'all':        
-            predictions['SGD'] = sgd(X_train, y_train, X_val) 
-            predictions['Random Forest'] = random_forest(X_train, y_train, X_val)
-            predictions['Dense Network'] = dense_network(X_train, y_train, X_val, y_val)
+            predictions['SGD'] = sgd(X_train, y_train, X_test) 
+            predictions['Random Forest'] = random_forest(X_train, y_train, X_test)
+            predictions['Dense Network'] = dense_network(X_train, y_train, X_test, y_test)
         case _:
             raise Exception(f'model:{args.model} not found')
-    log_results(y_val, **predictions)
+    log_results(y_test, **predictions)
     
 if __name__ == '__main__': 
     main()
