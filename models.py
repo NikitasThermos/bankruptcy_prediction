@@ -3,7 +3,7 @@ from scipy.stats import randint, uniform
 
 from sklearn.linear_model import SGDClassifier
 from sklearn.impute import KNNImputer
-from sklearn.preprocessing import RobustScaler
+from sklearn.preprocessing import RobustScaler, PolynomialFeatures
 from sklearn.ensemble import RandomForestClassifier
 from sklearn.model_selection import GridSearchCV, RandomizedSearchCV
 
@@ -14,8 +14,9 @@ import tensorflow as tf
 tf.random.set_seed(42)
 
 def sgd(X_train, y_train, X_test):
-    full_pipeline = make_pipeline(KNNImputer(weights='distance'), RobustScaler(), ADASYN(random_state=42),
-                              SGDClassifier(penalty='elasticnet', random_state=42))
+    full_pipeline = make_pipeline(KNNImputer(weights='distance'), PolynomialFeatures(degree=2),
+                                 RobustScaler(), ADASYN(random_state=42),
+                                 SGDClassifier(penalty='elasticnet', random_state=42))
     
     param_distribs = {'knnimputer__n_neighbors': randint(low=10, high=500),
                   'adasyn__sampling_strategy': uniform(loc=0.1, scale=0.99),
@@ -31,7 +32,7 @@ def sgd(X_train, y_train, X_test):
     random_search = RandomizedSearchCV(
         full_pipeline,
         param_distributions=param_distribs,
-        n_iter=20,
+        n_iter=10,
         scoring='f1',
         cv=3,
         random_state=42
