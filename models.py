@@ -41,10 +41,30 @@ def sgd(X_train, y_train, X_test):
     print(f'SGD best parameters:\n {random_search.best_params_}')
     return random_search.predict(X_test)
 
-def random_forest(X_train, y_train, X_val): 
-    print('Running Random Forest grid search...')
-    forest_clf = RandomForestClassifier(random_state=42, criterion='entropy')
-    param_grid = {'n_estimators':[4, 5, 6, 8, 10], 'min_samples_split':[2, 4, 6, 8, 10, 12]}
+def random_forest(X_train, y_train, X_test): 
+    full_pipeline = make_pipeline(KNNImputer(), RobustScaler(), ADASYN(), PolynomialFeatures(degree=2),
+                                  RandomForestClassifier(random_state=42))
+    param_distibs = {
+        'knnimputer__n_neighbors': randint(low=5, high=100),
+        'adasyn__sampling_strategy': uniform(loc=0.1, scale=0.99),
+        'adasyn__n_neighbors': randint(low=3, high=50),
+        'randomforestclassifier__class_weight': [None, 'balanced'],
+        'randomforestclassifier__criterion': ['gini', 'entropy'],
+        'randomforestclassifier__n_estimators': randint(low=2, high=60),
+    }
+    
+    random_search =  RandomizedSearchCV(
+        full_pipeline,
+        param_distributions=param_distibs,
+        n_iter=5,
+        scoring="f1",
+        cv=5,
+        verbose=2, 
+        random_state=42
+    )
+    random_search.fit(X_train, y_train)
+    return random_search.predict(X_test)
+    """
     grid_search = GridSearchCV(forest_clf, param_grid, 
                                 cv=3, scoring='f1',
                                 return_train_score=True, verbose=True)
@@ -52,6 +72,7 @@ def random_forest(X_train, y_train, X_val):
     print('Random Forest best parameters:')
     print(grid_search.best_params_)
     return grid_search.predict(X_val)
+    """
 
 def dense_network(X_train, y_train, X_val, y_val):
     train_dataset = tf.data.Dataset.from_tensor_slices((X_train, y_train))
