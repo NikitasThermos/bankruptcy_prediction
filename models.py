@@ -5,6 +5,7 @@ from sklearn.linear_model import SGDClassifier
 from sklearn.impute import KNNImputer
 from sklearn.preprocessing import RobustScaler, PolynomialFeatures
 from sklearn.ensemble import RandomForestClassifier
+from sklearn.svm import SVC
 from sklearn.model_selection import GridSearchCV, RandomizedSearchCV
 
 from imblearn.over_sampling import ADASYN
@@ -61,8 +62,6 @@ def logLoss(X_train, y_train, X_test):
         scoring='f1',
         cv=3,
         verbose=4,
-        return_train_score=True,
-        n_jobs=-1,
         random_state=42,
     )
 
@@ -70,7 +69,28 @@ def logLoss(X_train, y_train, X_test):
     print(f'Logistic Loss best parameters:\n {random_search.best_params_}')
     return random_search.predict(X_test)
 
+def svm(X_train, y_train, X_test):
+    full_pipeline = make_pipeline(KNNImputer(weights='distance'),  RobustScaler(),
+                                  SVC(kernel='poly', degree=2, random_state=42))
 
+    param_distribs = {
+        'knnimputer__n_neighbors': randint(low=5, high=100),
+        'svc__C': randint(low=1, high=100),
+        'svc__coef0': randint(low=1, high=100)
+    } 
+
+    random_search =  RandomizedSearchCV(
+        full_pipeline,
+        param_distributions=param_distribs,
+        n_iter=5,
+        scoring="f1",
+        verbose=4, 
+        cv=5,
+        random_state=42
+    )
+
+    random_search.fit(X_train, y_train)
+    return random_search.predict(X_test)
 
 def random_forest(X_train, y_train, X_test): 
     full_pipeline = make_pipeline(KNNImputer(), PolynomialFeatures(degree=2), RobustScaler(), ADASYN(),
