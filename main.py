@@ -9,7 +9,7 @@ from sklearn.metrics import confusion_matrix, recall_score, precision_score, f1_
 from tabulate import tabulate 
 
 from preprocessing import preprocess_dataset
-from models import sgd, random_forest, dense_network
+from models import sgd, logLoss, random_forest, dense_network
 
 def parse_arguments(sys_argv): 
     print('Parsing arguments...')
@@ -17,7 +17,7 @@ def parse_arguments(sys_argv):
 
     parser.add_argument('--model',
                         help='Select the model to use',
-                        choices=['all','SGD', 'RF', 'DNN'],
+                        choices=['all','SGD', 'LogLoss', 'RF', 'DNN'],
                         default='all',
                         type=str)
     return parser.parse_args(sys_argv)
@@ -51,6 +51,8 @@ def main():
     match args.model:
         case 'SGD':
             predictions['SGD'] = sgd(X_train, y_train, X_test) 
+        case 'LogLoss': 
+            predictions['LogLoss'] = logLoss(X_train, y_train, X_test)
         case 'RF':
             predictions['Random Forest'] = random_forest(X_train, y_train, X_test)
         case 'DNN':

@@ -41,6 +41,37 @@ def sgd(X_train, y_train, X_test):
     print(f'SGD best parameters:\n {random_search.best_params_}')
     return random_search.predict(X_test)
 
+def logLoss(X_train, y_train, X_test): 
+    full_pipeline = make_pipeline(KNNImputer(weights='distance'), PolynomialFeatures(degree=2, include_bias=False),
+                              RobustScaler(), ADASYN(sampling_strategy='minority', random_state=42),
+                              SGDClassifier(loss='log_loss', learning_rate='adaptive', 
+                                            penalty='elasticnet',  class_weight=None, random_state=42))
+
+    param_distribs = {'knnimputer__n_neighbors': randint(low=10, high=500),
+                  'adasyn__n_neighbors': randint(low=3, high=100),
+                  'sgdclassifier__alpha': uniform(loc=0.0001, scale=3),
+                  'sgdclassifier__l1_ratio': uniform(loc=0.1, scale=0.9),
+                  'sgdclassifier__eta0': uniform(loc=0.0001, scale=10),
+    }
+
+    random_search = RandomizedSearchCV(
+        full_pipeline,
+        param_distributions=param_distribs,
+        n_iter=20,
+        scoring='f1',
+        cv=3,
+        verbose=4,
+        return_train_score=True,
+        n_jobs=-1,
+        random_state=42,
+    )
+
+    random_search.fit(X_train, y_train)
+    print(f'Logistic Loss best parameters:\n {random_search.best_params_}')
+    return random_search.predict(X_test)
+
+
+
 def random_forest(X_train, y_train, X_test): 
     full_pipeline = make_pipeline(KNNImputer(), PolynomialFeatures(degree=2), RobustScaler(), ADASYN(),
                                   RandomForestClassifier(max_depth=12, random_state=42))
