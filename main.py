@@ -8,7 +8,7 @@ import numpy as np
 from sklearn.metrics import confusion_matrix, recall_score, precision_score, f1_score
 from tabulate import tabulate 
 
-from preprocessing import show_dataset_stats, preprocess_dataset
+from preprocessing import preprocess_dataset
 from models import sgd, random_forest, dense_network
 
 def parse_arguments(sys_argv): 
@@ -20,10 +20,6 @@ def parse_arguments(sys_argv):
                         choices=['all','SGD', 'RF', 'DNN'],
                         default='all',
                         type=str)
-    parser.add_argument('--log_data_stats',
-                        help='Log statistics for training dataset',
-                        default=False,
-                        type=bool)
     return parser.parse_args(sys_argv)
 
 def log_results(y_val, **predictions):
@@ -45,8 +41,7 @@ def main():
     X_test = pd.read_csv('test_data.csv')
     y_test = pd.read_csv('test_labels.csv', header=None)
     
-    if args.log_data_stats: 
-        show_dataset_stats(train_df)
+    
     
     X_train, y_train  = preprocess_dataset(train_df, 'train')
     X_test = preprocess_dataset(X_test, 'test')

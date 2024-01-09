@@ -4,15 +4,7 @@ from sklearn.preprocessing import StandardScaler, MinMaxScaler, RobustScaler
 from sklearn.model_selection import train_test_split
 from sklearn.pipeline import Pipeline
 
-def show_dataset_stats(df):
-    print('Dataset Info:')
-    print(df.info())
-    print('-' * 20)
-    print('Dataset Statistics:')
-    print(df.describe())
-    print('-' * 20)
-    print('Target Column Correlations:')
-    print(df.corr()['X65'].sort_values(ascending=False))
+
 
 def remove_outlier_values(dataset, threshold=2):
     scaler = StandardScaler()
