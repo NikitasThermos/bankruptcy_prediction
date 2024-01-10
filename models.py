@@ -6,7 +6,7 @@ from sklearn.impute import KNNImputer
 from sklearn.preprocessing import RobustScaler, PolynomialFeatures
 from sklearn.ensemble import RandomForestClassifier
 from sklearn.svm import SVC
-from sklearn.model_selection import GridSearchCV, RandomizedSearchCV
+from sklearn.model_selection import GridSearchCV, RandomizedSearchCV, train_test_split
 
 from imblearn.over_sampling import ADASYN
 from imblearn.pipeline import make_pipeline
@@ -93,8 +93,10 @@ def svm(X_train, y_train, X_test):
     return random_search.predict(X_test)
 
 def random_forest(X_train, y_train, X_test): 
-    full_pipeline = make_pipeline(KNNImputer(), PolynomialFeatures(degree=2), RobustScaler(), ADASYN(),
-                                  RandomForestClassifier(max_depth=12, random_state=42))
+    full_pipeline = make_pipeline(KNNImputer(), PolynomialFeatures(degree=2),
+                                   ADASYN(), RobustScaler(), 
+                                   RandomForestClassifier(max_depth=12, random_state=42))
+    
     param_distibs = {
         'knnimputer__n_neighbors': randint(low=5, high=100),
         'adasyn__sampling_strategy': uniform(loc=0.1, scale=0.99),
@@ -117,31 +119,47 @@ def random_forest(X_train, y_train, X_test):
     return random_search.predict(X_test)
 
 
-def dense_network(X_train, y_train, X_val, y_val):
-    train_dataset = tf.data.Dataset.from_tensor_slices((X_train, y_train))
-    val_dataset = tf.data.Dataset.from_tensor_slices((X_val, y_val))
+def dense_network(X_train, y_train, X_test):
+    pipeline = make_pipeline(KNNImputer(weights='distance', n_neighbors=50), PolynomialFeatures(degree=2), RobustScaler())
+    X_train = pipeline.fit_transform(X_train, y_train)
+    y_train = tf.cast(y_train, dtype=tf.float32)
 
-    train_dataset = train_dataset.shuffle(buffer_size=3000).batch(32)
+    adasyn = ADASYN(sampling_strategy='minority', n_neighbors=25)
+    X_train_res, y_train_res = adasyn.fit_resample(X_train, y_train)
+
+    X_train_res, X_val_res, y_train_res, y_val_res = train_test_split(X_train_res, y_train_res, test_size=0.2, random_state=42)
+
+    train_dataset = tf.data.Dataset.from_tensor_slices((X_train_res, y_train_res))
+    train_dataset = train_dataset.shuffle(buffer_size=1000).batch(32)
+
+    val_dataset = tf.data.Dataset.from_tensor_slices((X_val_res, y_val_res))
     val_dataset = val_dataset.batch(32)
 
     model = tf.keras.Sequential([
-        tf.keras.layers.Dense(128, activation='relu', input_shape=(64,)),
-        tf.keras.layers.Dense(1, activation='sigmoid')
-    ])
+                tf.keras.layers.Dense(1000, activation="relu", input_shape=(X_train.shape[1],)),
+                tf.keras.layers.Dense(500, activation="relu"),
+                tf.keras.layers.Dense(100, activation="relu"),
+                tf.keras.layers.Dense(25, activation="relu"),
+                tf.keras.layers.Dense(1, activation="sigmoid")
+            ])
 
-    early_stopping_cb = tf.keras.callbacks.EarlyStopping(patience=5,
-                                                         monitor='val_auc',
-                                                         restore_best_weights=True)
+    early_stopping_cb = tf.keras.callbacks.EarlyStopping(monitor='val_auc', patience = 5, mode='max', restore_best_weights = True)
     callbacks = [early_stopping_cb]
 
-    optimizer = tf.keras.optimizers.Adam(learning_rate=0.0001,
-                                         beta_1=0.9, beta_2=0.999)
+    lr = tf.keras.optimizers.schedules.ExponentialDecay(
+            initial_learning_rate=0.0001,
+            decay_steps=1000,
+            decay_rate=0.9,
+            staircase=False,
+        )
+    optimizer = tf.keras.optimizers.Adam(learning_rate=lr)
     model.compile(loss="binary_crossentropy",
                   optimizer=optimizer,
-                  metrics=[tf.keras.metrics.Recall(), tf.keras.metrics.Precision(), tf.keras.metrics.AUC(name='auc')])
-    
-    history = model.fit(train_dataset, epochs=30,
+                  metrics=[tf.keras.metrics.AUC(name='auc')])
+
+    history = model.fit(train_dataset, epochs=70,
                         validation_data=val_dataset,
                         callbacks=callbacks)
-
-    return [1 if p > 0.5 else 0 for p in model.predict(X_val)]
+    
+    X_test = pipeline.transform(X_test)
+    return [1 if p > 0.5 else 0 for p in model.predict(X_test)]
