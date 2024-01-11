@@ -9,7 +9,7 @@ from sklearn.metrics import confusion_matrix, recall_score, precision_score, f1_
 from tabulate import tabulate 
 
 from preprocessing import preprocess_dataset
-from models import sgd, logLoss, svm, random_forest, dense_network
+from models import logLoss, svm, random_forest, dense_network
 
 def parse_arguments(sys_argv): 
     print('Parsing arguments...')
@@ -17,7 +17,7 @@ def parse_arguments(sys_argv):
 
     parser.add_argument('--model',
                         help='Select the model to use',
-                        choices=['all','SGD', 'LogLoss', 'SVM', 'RF', 'DNN'],
+                        choices=['all', 'LogLoss', 'SVM', 'RF', 'DNN'],
                         default='all',
                         type=str)
     parser.add_argument('--best_parameters',
@@ -52,8 +52,6 @@ def main():
     predictions = dict()
 
     match args.model:
-        case 'SGD':
-            predictions['SGD'] = sgd(X_train, y_train, X_test, args.best_parameters) 
         case 'LogLoss': 
             predictions['LogLoss'] = logLoss(X_train, y_train, X_test, args.best_parameters)
         case 'SVM':
@@ -63,7 +61,6 @@ def main():
         case 'DNN':
             predictions['Dense Network'] = dense_network(X_train, y_train, X_test, args.best_parameters)
         case 'all':        
-            predictions['SGD'] = sgd(X_train, y_train, X_test, args.best_parameters) 
             predictions['Random Forest'] = random_forest(X_train, y_train, X_test, args.best_parameters)
             predictions['Dense Network'] = dense_network(X_train, y_train, X_test, args.best_parameters)
         case _:

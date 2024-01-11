@@ -18,33 +18,6 @@ from imblearn.pipeline import make_pipeline
 import tensorflow as tf
 tf.random.set_seed(42)
 
-def sgd(X_train, y_train, X_test, best_parameters):
-    full_pipeline = make_pipeline(KNNImputer(weights='distance'), PolynomialFeatures(degree=2),
-                                 RobustScaler(), ADASYN(random_state=42),
-                                 SGDClassifier(penalty='elasticnet', random_state=42))
-    
-    param_distribs = {'knnimputer__n_neighbors': randint(low=10, high=500),
-                  'adasyn__sampling_strategy': uniform(loc=0.1, scale=0.99),
-                  'adasyn__n_neighbors': randint(low=3, high=50),
-                  'sgdclassifier__class_weight': [None, 'balanced', {1: np.random.uniform(low=0.1, high=50.0)}],
-                  'sgdclassifier__alpha': uniform(loc=0.0001, scale=3),
-                  'sgdclassifier__loss': ['hinge', 'modified_huber', 'squared_hinge'],
-                  'sgdclassifier__l1_ratio': uniform(loc=0.1, scale=0.9),
-                  'sgdclassifier__learning_rate': ['optimal', 'invscaling', 'adaptive'],
-                  'sgdclassifier__eta0': uniform(loc=0.0001, scale=10),
-
-    }
-    random_search = RandomizedSearchCV(
-        full_pipeline,
-        param_distributions=param_distribs,
-        n_iter=10,
-        scoring='f1',
-        cv=3,
-        random_state=42
-    )
-    random_search.fit(X_train, y_train)
-    print(f'SGD best parameters:\n {random_search.best_params_}')
-    return random_search.predict(X_test)
 
 def logLoss(X_train, y_train, X_test, best_parameters):
     if best_parameters: 
