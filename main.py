@@ -22,6 +22,10 @@ def parse_arguments(sys_argv):
                         help='Use best parameters generated during testing',
                         default=False,
                         type=bool)
+    parser.add_argument('--save_model',
+                        help='Save the parameters for the trained models',
+                        default=False, 
+                        type=bool)
     
     return parser.parse_args(sys_argv)
 
@@ -51,18 +55,18 @@ def main():
 
     match args.model:
         case 'LogLoss': 
-            predictions['LogLoss'] = logLoss(X_train, y_train, X_test, args.best_parameters)
+            predictions['LogLoss'] = logLoss(X_train, y_train, X_test, args)
         case 'SVM':
-            predictions['SVM'] = svm(X_train, y_train, X_test, args.best_parameters)
+            predictions['SVM'] = svm(X_train, y_train, X_test, args)
         case 'RF':
-            predictions['Random Forest'] = random_forest(X_train, y_train, X_test, args.best_parameters)
+            predictions['Random Forest'] = random_forest(X_train, y_train, X_test, args)
         case 'DNN':
-            predictions['Dense Network'] = dense_network(X_train, y_train, X_test, args.best_parameters)
+            predictions['Dense Network'] = dense_network(X_train, y_train, X_test, args)
         case 'all':
-            predictions['LogLoss'] =  logLoss(X_train, y_train, X_test, args.best_parameters)
-            predictions['SVM'] = svm(X_train, y_train, X_test, args.best_parameters)       
-            predictions['Random Forest'] = random_forest(X_train, y_train, X_test, args.best_parameters)
-            predictions['Dense Network'] = dense_network(X_train, y_train, X_test, args.best_parameters)
+            predictions['LogLoss'] =  logLoss(X_train, y_train, X_test, args)
+            predictions['SVM'] = svm(X_train, y_train, X_test, args)       
+            predictions['Random Forest'] = random_forest(X_train, y_train, X_test, args)
+            predictions['Dense Network'] = dense_network(X_train, y_train, X_test, args)
         case _:
             raise Exception(f'model:{args.model} not found')
     log_results(y_test, **predictions)

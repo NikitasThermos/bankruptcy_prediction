@@ -18,8 +18,8 @@ import tensorflow as tf
 tf.random.set_seed(42)
 
 
-def logLoss(X_train, y_train, X_test, best_parameters):
-    if best_parameters: 
+def logLoss(X_train, y_train, X_test, args):
+    if args.best_parameters: 
         model = joblib.load('parameters/logloss.pki')
         return model.predict(X_test)
      
@@ -46,11 +46,12 @@ def logLoss(X_train, y_train, X_test, best_parameters):
     )
 
     random_search.fit(X_train, y_train)
-    joblib.dump(random_search, 'parameters/logloss.pki')
+    if args.save_model: 
+        joblib.dump(random_search, 'parameters/logloss.pki')
     return random_search.predict(X_test)
 
-def svm(X_train, y_train, X_test, best_parameters):
-    if best_parameters:
+def svm(X_train, y_train, X_test, args):
+    if args.best_parameters:
         model = joblib.load('parameters/svm_poly.pki')
         return model.predict(X_test)
     
@@ -75,11 +76,12 @@ def svm(X_train, y_train, X_test, best_parameters):
     )
 
     random_search.fit(X_train, y_train)
-    joblib.dump(random_search, 'parameters/svm_poly.pki')
+    if args.save_model:
+        joblib.dump(random_search, 'parameters/svm_poly.pki')
     return random_search.predict(X_test)
 
-def random_forest(X_train, y_train, X_test, best_parameters): 
-    if best_parameters: 
+def random_forest(X_train, y_train, X_test, args): 
+    if args.best_parameters: 
         model = joblib.load('parameters/rf.pki')
         return model.predict(X_test)
     
@@ -107,11 +109,12 @@ def random_forest(X_train, y_train, X_test, best_parameters):
         random_state=42
     )
     random_search.fit(X_train, y_train)
-    joblib.dump(random_search, 'parameters/rf.pki')
+    if args.save_model:
+        joblib.dump(random_search, 'parameters/rf.pki')
     return random_search.predict(X_test)
 
 
-def dense_network(X_train, y_train, X_test, best_parameters):
+def dense_network(X_train, y_train, X_test, args):
     pipeline = make_pipeline(KNNImputer(weights='distance', n_neighbors=50), PolynomialFeatures(degree=2), RobustScaler())
     X_train = pipeline.fit_transform(X_train, y_train)
     y_train = tf.cast(y_train, dtype=tf.float32)
