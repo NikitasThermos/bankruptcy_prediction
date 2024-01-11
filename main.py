@@ -60,7 +60,9 @@ def main():
             predictions['Random Forest'] = random_forest(X_train, y_train, X_test, args.best_parameters)
         case 'DNN':
             predictions['Dense Network'] = dense_network(X_train, y_train, X_test, args.best_parameters)
-        case 'all':        
+        case 'all':
+            predictions['LogLoss'] =  logLoss(X_train, y_train, X_test, args.best_parameters)
+            predictions['SVM'] = svm(X_train, y_train, X_test, args.best_parameters)       
             predictions['Random Forest'] = random_forest(X_train, y_train, X_test, args.best_parameters)
             predictions['Dense Network'] = dense_network(X_train, y_train, X_test, args.best_parameters)
         case _:
