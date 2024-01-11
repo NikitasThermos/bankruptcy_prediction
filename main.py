@@ -62,7 +62,7 @@ def main():
             predictions['LogLoss'] =  logLoss(X_train, y_train, X_test, args.best_parameters)
             predictions['SVM'] = svm(X_train, y_train, X_test, args.best_parameters)       
             predictions['Random Forest'] = random_forest(X_train, y_train, X_test, args.best_parameters)
-            #predictions['Dense Network'] = dense_network(X_train, y_train, X_test, args.best_parameters)
+            predictions['Dense Network'] = dense_network(X_train, y_train, X_test, args.best_parameters)
         case _:
             raise Exception(f'model:{args.model} not found')
     log_results(y_test, **predictions)
