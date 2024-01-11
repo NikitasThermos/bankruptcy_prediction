@@ -115,11 +115,18 @@ def random_forest(X_train, y_train, X_test, args):
 
 
 def dense_network(X_train, y_train, X_test, args):
-    pipeline = make_pipeline(KNNImputer(weights='distance', n_neighbors=50), PolynomialFeatures(degree=2), RobustScaler())
+    
+    pipeline = make_pipeline(KNNImputer(weights='distance', n_neighbors=100), PolynomialFeatures(degree=2), RobustScaler())
     X_train = pipeline.fit_transform(X_train, y_train)
+    X_test = pipeline.transform(X_test)
+    
+    if args.best_parameters:
+        model = tf.keras.models.load_model('parameters/dnn.h5')
+        return [1 if p > 0.5 else 0 for p in model.predict(X_test)]
+
     y_train = tf.cast(y_train, dtype=tf.float32)
 
-    adasyn = ADASYN(sampling_strategy='minority', n_neighbors=25)
+    adasyn = ADASYN(sampling_strategy='minority', n_neighbors=50)
     X_train_res, y_train_res = adasyn.fit_resample(X_train, y_train)
 
     X_train_res, X_val_res, y_train_res, y_val_res = train_test_split(X_train_res, y_train_res, test_size=0.2, random_state=42)
@@ -141,12 +148,15 @@ def dense_network(X_train, y_train, X_test, args):
     early_stopping_cb = tf.keras.callbacks.EarlyStopping(monitor='val_auc', patience = 5, mode='max', restore_best_weights = True)
     callbacks = [early_stopping_cb]
 
+    
     lr = tf.keras.optimizers.schedules.ExponentialDecay(
             initial_learning_rate=0.0001,
             decay_steps=1000,
             decay_rate=0.9,
             staircase=False,
         )
+    
+
     optimizer = tf.keras.optimizers.Adam(learning_rate=lr)
     model.compile(loss="binary_crossentropy",
                   optimizer=optimizer,
@@ -156,5 +166,6 @@ def dense_network(X_train, y_train, X_test, args):
                         validation_data=val_dataset,
                         callbacks=callbacks)
     
-    X_test = pipeline.transform(X_test)
+    if args.save_model:
+        model.save('parameters/dnn.h5')
     return [1 if p > 0.5 else 0 for p in model.predict(X_test)]
