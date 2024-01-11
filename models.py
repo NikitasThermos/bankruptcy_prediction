@@ -1,3 +1,7 @@
+import warnings
+warnings.filterwarnings("ignore")
+import joblib
+
 import numpy as np 
 from scipy.stats import randint, uniform
 
@@ -14,7 +18,7 @@ from imblearn.pipeline import make_pipeline
 import tensorflow as tf
 tf.random.set_seed(42)
 
-def sgd(X_train, y_train, X_test):
+def sgd(X_train, y_train, X_test, best_parameters):
     full_pipeline = make_pipeline(KNNImputer(weights='distance'), PolynomialFeatures(degree=2),
                                  RobustScaler(), ADASYN(random_state=42),
                                  SGDClassifier(penalty='elasticnet', random_state=42))
@@ -42,39 +46,51 @@ def sgd(X_train, y_train, X_test):
     print(f'SGD best parameters:\n {random_search.best_params_}')
     return random_search.predict(X_test)
 
-def logLoss(X_train, y_train, X_test): 
+def logLoss(X_train, y_train, X_test, best_parameters):
+    if best_parameters: 
+        print("Loading best parameters...")
+        model = joblib.load('parameters/logloss.pki')
+        return model.predict(X_test)
+     
     full_pipeline = make_pipeline(KNNImputer(weights='distance'), PolynomialFeatures(degree=2, include_bias=False),
-                              RobustScaler(), ADASYN(sampling_strategy='minority', random_state=42),
-                              SGDClassifier(loss='log_loss', learning_rate='adaptive', 
-                                            penalty='elasticnet',  class_weight=None, random_state=42))
+                                RobustScaler(), ADASYN(sampling_strategy='minority', random_state=42),
+                                SGDClassifier(loss='log_loss', learning_rate='adaptive', 
+                                                penalty='elasticnet',  class_weight=None, random_state=42))
 
     param_distribs = {'knnimputer__n_neighbors': randint(low=10, high=500),
-                  'adasyn__n_neighbors': randint(low=3, high=100),
-                  'sgdclassifier__alpha': uniform(loc=0.0001, scale=3),
-                  'sgdclassifier__l1_ratio': uniform(loc=0.1, scale=0.9),
-                  'sgdclassifier__eta0': uniform(loc=0.0001, scale=10),
+                    'adasyn__n_neighbors': randint(low=3, high=100),
+                    'sgdclassifier__alpha': uniform(loc=0.0001, scale=3),
+                    'sgdclassifier__l1_ratio': uniform(loc=0.1, scale=0.9),
+                    'sgdclassifier__eta0': uniform(loc=0.0001, scale=10),
     }
 
     random_search = RandomizedSearchCV(
-        full_pipeline,
-        param_distributions=param_distribs,
-        n_iter=20,
-        scoring='f1',
-        cv=3,
-        verbose=4,
-        random_state=42,
+            full_pipeline,
+            param_distributions=param_distribs,
+            n_iter=10,
+            scoring='f1',
+            cv=3,
+            verbose=4,
+            random_state=42,
     )
 
     random_search.fit(X_train, y_train)
     print(f'Logistic Loss best parameters:\n {random_search.best_params_}')
+    joblib.dump(random_search, 'parameters/logloss.pki')
     return random_search.predict(X_test)
 
-def svm(X_train, y_train, X_test):
-    full_pipeline = make_pipeline(KNNImputer(weights='distance'),  RobustScaler(),
-                                  SVC(kernel='poly', degree=2, random_state=42))
+def svm(X_train, y_train, X_test, best_parameters):
+    if best_parameters:
+        print('Loading best parameters...') 
+        model = joblib.load('parameters/svm_poly.pki')
+        return model.predict(X_test)
+    
+    full_pipeline = make_pipeline(KNNImputer(weights='distance'), ADASYN(sampling_strategy='minority'),  
+                                  RobustScaler(),  SVC(kernel='poly', degree=2, random_state=42))
 
     param_distribs = {
         'knnimputer__n_neighbors': randint(low=5, high=100),
+        'adasyn__n_neighbors': randint(low=5, high=100),
         'svc__C': randint(low=1, high=100),
         'svc__coef0': randint(low=1, high=100)
     } 
@@ -90,16 +106,23 @@ def svm(X_train, y_train, X_test):
     )
 
     random_search.fit(X_train, y_train)
+    joblib.dump(random_search, 'parameters/svm_poly.pki')
     return random_search.predict(X_test)
 
-def random_forest(X_train, y_train, X_test): 
+def random_forest(X_train, y_train, X_test, best_parameters): 
+    if best_parameters: 
+        print('Loading best parameters...')
+        model = joblib.load('parameters/rf.pki')
+        return model.predict(X_test)
+    
+
     full_pipeline = make_pipeline(KNNImputer(), PolynomialFeatures(degree=2),
                                    ADASYN(), RobustScaler(), 
                                    RandomForestClassifier(max_depth=12, random_state=42))
     
     param_distibs = {
         'knnimputer__n_neighbors': randint(low=5, high=100),
-        'adasyn__sampling_strategy': uniform(loc=0.1, scale=0.99),
+        'adasyn__sampling_strategy': uniform(loc=0.1, scale=0.9),
         'adasyn__n_neighbors': randint(low=3, high=50),
         'randomforestclassifier__class_weight': [None, 'balanced'],
         'randomforestclassifier__criterion': ['gini', 'entropy'],
@@ -116,10 +139,11 @@ def random_forest(X_train, y_train, X_test):
         random_state=42
     )
     random_search.fit(X_train, y_train)
+    joblib.dump(random_search, 'parameters/rf.pki')
     return random_search.predict(X_test)
 
 
-def dense_network(X_train, y_train, X_test):
+def dense_network(X_train, y_train, X_test, best_parameters):
     pipeline = make_pipeline(KNNImputer(weights='distance', n_neighbors=50), PolynomialFeatures(degree=2), RobustScaler())
     X_train = pipeline.fit_transform(X_train, y_train)
     y_train = tf.cast(y_train, dtype=tf.float32)

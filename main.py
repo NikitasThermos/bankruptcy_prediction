@@ -20,6 +20,11 @@ def parse_arguments(sys_argv):
                         choices=['all','SGD', 'LogLoss', 'SVM', 'RF', 'DNN'],
                         default='all',
                         type=str)
+    parser.add_argument('--best_parameters',
+                        help='Use best parameters generated during testing',
+                        default=False,
+                        type=bool)
+    
     return parser.parse_args(sys_argv)
 
 def log_results(y_val, **predictions):
@@ -48,19 +53,19 @@ def main():
 
     match args.model:
         case 'SGD':
-            predictions['SGD'] = sgd(X_train, y_train, X_test) 
+            predictions['SGD'] = sgd(X_train, y_train, X_test, args.best_parameters) 
         case 'LogLoss': 
-            predictions['LogLoss'] = logLoss(X_train, y_train, X_test)
+            predictions['LogLoss'] = logLoss(X_train, y_train, X_test, args.best_parameters)
         case 'SVM':
-            predictions['SVM'] = svm(X_train, y_train, X_test)
+            predictions['SVM'] = svm(X_train, y_train, X_test, args.best_parameters)
         case 'RF':
-            predictions['Random Forest'] = random_forest(X_train, y_train, X_test)
+            predictions['Random Forest'] = random_forest(X_train, y_train, X_test, args.best_parameters)
         case 'DNN':
-            predictions['Dense Network'] = dense_network(X_train, y_train, X_test)
+            predictions['Dense Network'] = dense_network(X_train, y_train, X_test, args.best_parameters)
         case 'all':        
-            predictions['SGD'] = sgd(X_train, y_train, X_test) 
-            predictions['Random Forest'] = random_forest(X_train, y_train, X_test)
-            predictions['Dense Network'] = dense_network(X_train, y_train, X_test)
+            predictions['SGD'] = sgd(X_train, y_train, X_test, args.best_parameters) 
+            predictions['Random Forest'] = random_forest(X_train, y_train, X_test, args.best_parameters)
+            predictions['Dense Network'] = dense_network(X_train, y_train, X_test, args.best_parameters)
         case _:
             raise Exception(f'model:{args.model} not found')
     log_results(y_test, **predictions)
