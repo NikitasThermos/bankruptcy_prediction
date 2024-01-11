@@ -1,5 +1,4 @@
-import warnings
-warnings.filterwarnings("ignore")
+
 import joblib
 
 import numpy as np 
@@ -10,7 +9,7 @@ from sklearn.impute import KNNImputer
 from sklearn.preprocessing import RobustScaler, PolynomialFeatures
 from sklearn.ensemble import RandomForestClassifier
 from sklearn.svm import SVC
-from sklearn.model_selection import GridSearchCV, RandomizedSearchCV, train_test_split
+from sklearn.model_selection import RandomizedSearchCV, train_test_split
 
 from imblearn.over_sampling import ADASYN
 from imblearn.pipeline import make_pipeline
@@ -21,7 +20,6 @@ tf.random.set_seed(42)
 
 def logLoss(X_train, y_train, X_test, best_parameters):
     if best_parameters: 
-        print("Loading best parameters...")
         model = joblib.load('parameters/logloss.pki')
         return model.predict(X_test)
      
@@ -48,13 +46,11 @@ def logLoss(X_train, y_train, X_test, best_parameters):
     )
 
     random_search.fit(X_train, y_train)
-    print(f'Logistic Loss best parameters:\n {random_search.best_params_}')
     joblib.dump(random_search, 'parameters/logloss.pki')
     return random_search.predict(X_test)
 
 def svm(X_train, y_train, X_test, best_parameters):
     if best_parameters:
-        print('Loading best parameters...') 
         model = joblib.load('parameters/svm_poly.pki')
         return model.predict(X_test)
     
@@ -84,7 +80,6 @@ def svm(X_train, y_train, X_test, best_parameters):
 
 def random_forest(X_train, y_train, X_test, best_parameters): 
     if best_parameters: 
-        print('Loading best parameters...')
         model = joblib.load('parameters/rf.pki')
         return model.predict(X_test)
     

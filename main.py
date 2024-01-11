@@ -4,7 +4,6 @@ import sys
 import argparse
 
 import pandas as pd 
-import numpy as np
 from sklearn.metrics import confusion_matrix, recall_score, precision_score, f1_score
 from tabulate import tabulate 
 
@@ -12,7 +11,6 @@ from preprocessing import preprocess_dataset
 from models import logLoss, svm, random_forest, dense_network
 
 def parse_arguments(sys_argv): 
-    print('Parsing arguments...')
     parser = argparse.ArgumentParser() 
 
     parser.add_argument('--model',
@@ -28,7 +26,7 @@ def parse_arguments(sys_argv):
     return parser.parse_args(sys_argv)
 
 def log_results(y_val, **predictions):
-    print('Logging results for the evaluation dataset:')
+    print('Logging results for the test dataset:')
     results = []
     for model, pred in predictions.items(): 
         print(f'Confusion Matrix for {model} :')
@@ -64,7 +62,7 @@ def main():
             predictions['LogLoss'] =  logLoss(X_train, y_train, X_test, args.best_parameters)
             predictions['SVM'] = svm(X_train, y_train, X_test, args.best_parameters)       
             predictions['Random Forest'] = random_forest(X_train, y_train, X_test, args.best_parameters)
-            predictions['Dense Network'] = dense_network(X_train, y_train, X_test, args.best_parameters)
+            #predictions['Dense Network'] = dense_network(X_train, y_train, X_test, args.best_parameters)
         case _:
             raise Exception(f'model:{args.model} not found')
     log_results(y_test, **predictions)
