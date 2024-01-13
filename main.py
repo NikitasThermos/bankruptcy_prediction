@@ -44,9 +44,9 @@ def log_results(y_val, **predictions):
 def main(): 
     args = parse_arguments(sys.argv[1:])
 
-    train_df = pd.read_csv('companydata.csv')
-    X_test = pd.read_csv('test_data.csv')
-    y_test = pd.read_csv('test_labels.csv', header=None)
+    train_df = pd.read_csv('Dataset/companydata.csv')
+    X_test = pd.read_csv('Dataset/test_data.csv')
+    y_test = pd.read_csv('Dataset/test_labels.csv', header=None)
     
     X_train, y_train  = preprocess_dataset(train_df, 'train')
     X_test = preprocess_dataset(X_test, 'test')
