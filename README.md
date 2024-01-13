@@ -12,27 +12,25 @@ A machine learning project for predicting bankruptcy in the context of 'Data Min
 
 <a name="introduction"></a>
 ## Introduction
-The goal of the project was to develop ML models ob a dataset that has irregularities and anomalies. For taht reason the project is splited in two main parts. The first part includes the preprocessing of the data and the devlopment of a pipeline that it can transform the data initially to a state that is required from the ML models and secondly to increase the information that we can obtain from the original data for better perfomance. For the second part of the project we implement few ML models and compare the results on a test dataset.
+The goal of the project was to develop ML models with a dataset that has irregularities and anomalies. For that reason the project is splited in two main parts. The first part includes the preprocessing of the data and the devlopment of a pipeline that it can transform the data initially to a state that is required from the ML models and secondly to increase the information that we can obtain from the original data for better perfomance. For the second part of the project we implement few ML models and compare the results on a test dataset.
 
 <a name="dataset"></a>
 ## Dataset
-The project works with a subset of " Tomczak,Sebastian. (2016). Polish companies bankruptcy data. UCI Machine Learning Repository." which is available [here](https://archive.ics.uci.edu/dataset/365/polish+companies+bankruptcy+data). The dataset contains financial information about Polish companies analyzed in the period 2000-2012 and the data were collected from Emerging Markets Information Service(EMIS). Specifically, for each company the dataset contains 64 annual financial statistics and also a label that indicates bankruptcy status after certain amount of years. You can find what each feature of the dataset represents on the [Dataset Feeatures](#features) section. 
+The project works with a subset of " Tomczak,Sebastian. (2016). Polish companies bankruptcy data. UCI Machine Learning Repository." which is available [here](https://archive.ics.uci.edu/dataset/365/polish+companies+bankruptcy+data). The dataset contains financial information about Polish companies analyzed in the period 2000-2012 and the data were collected from Emerging Markets Information Service (EMIS). Specifically, for each company the dataset contains 64 annual financial statistics and also a label that indicates bankruptcy status after certain amount of years. You can find what each feature of the dataset represents on the [Dataset Feeatures](#features) section. 
 
-The subset contains data collected only from the first year of the forecasting period and the labels indicate the bankruptcy status after 5 years. Therfore we can distinguish the observations into two classes that we can simply refer to them as negative and positive classes. The positive class contains the observavions which have a label equal to one indicating bankruptcy after 5 years while the rest of the observations are part of the negative class. The ratio of observations for each class in the training and the test set are presented below.
+The subset that we worked with contains data collected only from the first year of the forecasting period and the labels indicate the bankruptcy status after 5 years. Therfore we can distinguish the observations into two classes that we can simply refer to them as negative and positive classes. The positive class contains the observavions which have a label equal to one indicating bankruptcy after 5 years while the rest of the observations are part of the negative class. The ratio of observations for each class in the training and the test set are presented below.
 
-| Set |  Negative Observations | Positive Observation | 
+| Set |  Negative Observations | Positive Observations | 
 | --- | --- | --- |
 | Training | 6756 | 271 |  
 | Test |  3486 | 514 | 
 
-The main problems that we came across when working with the dataset include the following
+The main problems that we came across when working with the dataset include the following:
 * Missing Values
 * Outlier instances/values
 * Duplicate instances
 * Imbalanced classes
 * Small amount of training instances and features
-
-
 
 <a name="results"></a>
 ## Results
