@@ -16,9 +16,22 @@ The goal of the project was to develop ML models ob a dataset that has irregular
 
 <a name="dataset"></a>
 ## Dataset
-The project works with a subset of " Tomczak,Sebastian. (2016). Polish companies bankruptcy data. UCI Machine Learning Repository." which is available [here](https://archive.ics.uci.edu/dataset/365/polish+companies+bankruptcy+data). The dataset contains financial information about Polish companies analyzed in the period 2000-2012 and the data were collected from Emerging Markets Information Service(EMIS). Specifically, for each company the dataset contains 64 annual financial statistics and also a label that indicates bankruptcy status after certain amount of years. You can find what each feature of the dataset represents on the [Dataset Feeatures](#features) section 
+The project works with a subset of " Tomczak,Sebastian. (2016). Polish companies bankruptcy data. UCI Machine Learning Repository." which is available [here](https://archive.ics.uci.edu/dataset/365/polish+companies+bankruptcy+data). The dataset contains financial information about Polish companies analyzed in the period 2000-2012 and the data were collected from Emerging Markets Information Service(EMIS). Specifically, for each company the dataset contains 64 annual financial statistics and also a label that indicates bankruptcy status after certain amount of years. You can find what each feature of the dataset represents on the [Dataset Feeatures](#features) section. 
 
-The subset contains data collected only from the first year of the forecasting period and the label indicates the bankruptcy status after 5 years.  
+The subset contains data collected only from the first year of the forecasting period and the labels indicate the bankruptcy status after 5 years. Therfore we can distinguish the observations into two classes that we can simply refer to them as negative and positive classes. The positive class contains the observavions which have a label equal to one indicating bankruptcy after 5 years while the rest of the observations are part of the negative class. The ratio of observations for each class in the training and the test set are presented below.
+
+| Set |  Negative Observations | Positive Observation | 
+| --- | --- | --- |
+| Training | 6756 | 271 |  
+| Test |  3486 | 514 | 
+
+The main problems that we came across when working with the dataset include the following
+* Missing Values
+* Outlier instances/values
+* Duplicate instances
+* Imbalanced classes
+* Small amount of training instances and features
+
 
 
 <a name="results"></a>
