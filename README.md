@@ -59,7 +59,7 @@ Finally we can combine these two to get the F1 score which is the harmonic mean 
 | Support Vector Machine | 0.28 | 0.59 | 0.38
 | Support Vector Machine - Polynomial | 0.27 | 0.73 | 0.40
 | Support Vector Machine - RBF | 0.27 | 0.70 | 0.39
-| Random Forest |
+| Random Forest | 0.63 | 0.44 | 0.52 
 | Dense Neural Network | 
 
 
