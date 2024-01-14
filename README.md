@@ -10,7 +10,8 @@ A machine learning project for predicting bankruptcy in the context of 'Data Min
 3. [Data Processing](#processing)
 4. [Results](#results)
 5. [Further Improvements](#improvements)
-6. [Dataset Features](#features)
+6. [Deployment](#deployment)
+7. [Dataset Features](#features)
 
 <a name="introduction"></a>
 ## Introduction
@@ -37,6 +38,26 @@ Thus the problem can be thought as a binary classification task with the goal of
 
 <a name="processing"></a>
 ## Data Processing
+The first step of preprocessing is the removal of duplicate observations. We believe that it is highly unlikely that two observations would have the same values across 64 features and thus these observations have been mistakenly added twice. Further all of the duplicate observations are part of the majority class and by removing them we improve the balance between the two classes. In total, 82 observations were removed in that process. 
+
+By examining the statistics of the dataset we noticed that for many features the minimum and maximum values are way too far from the mean values. Furthermore, these extreme values are not parts of the same instances so it is not a simply case of outlier observations. We procedeed by removing these value resulting in a great improvement of perfomance for all the models. The removal of the outlier values is achieved by obtaining a standardize version of the dataset and removing the values which are greater than a threshold.
+
+The missing values that exist in the dataset are filled with an Imputer. We use the KNNImputer that fills the missing values based on the closest neighbors of each instance. Also, most of the ML algorithms perform better with scaled data so each feature has a similar range. We use the RobustScaler which is not influenced by outliers. A comparison of different scalers in a dataset with outliers can be found [here](https://scikit-learn.org/stable/auto_examples/preprocessing/plot_all_scaling.html).
+
+Due to the small amount of features that are included in the original dataset we also included the addition of new features, hoping to provide more usefull information for our models. To achieve that, a common way is the PolynomialFeatures class that adds higher degrees and combinations of the original features. 
+
+Finally, we tried to deal with the problem of the imbalanced classes in two different ways: 
+
+1. Class Weights 
+
+Most ML models give the option of providing a weight for each of the classes. With that we can specify how much the model should focus on the observations of each class. Giving a large weight on the minority class means that each observation of that class will have a greater impact on the update of model's parameters thus balancing the training of the model. 
+
+2. Sampling
+
+With sampling we can generate more instances of a class so the model will have more observations to work with. There are many ways to add new observations based on the original ones but we chose the ADASYN sampler from Imbalanced-Learn. [Here](https://imbalanced-learn.org/stable/over_sampling.html#smote-adasyn) is a comparison of the samplers that Imbalanced-Learn provides.
+
+Over-sampling of the minority class provides a better perfomance for all the models compared to class weights so we chose that for our preprocessing.
+
 
 <a name="results"></a>
 ## Results
@@ -52,7 +73,7 @@ Precision = $\frac{TP}{TP + FP}$
 
 Recall = $\frac{TP}{TP + FN}$
 
-Finally we can combine these two to get the F1 score which is the harmonic mean of Precision and Recall. Based on these measures the perfomance of each moel is presented in the table below
+Finally we can combine these two to get the F1 score which is the harmonic mean of Precision and Recall. Based on these measures the perfomance of each moel is presented in the table below:
 
 | Model | Precision | Recall | F1 | 
 | --- | --- | --- | --- | 
@@ -65,6 +86,16 @@ Finally we can combine these two to get the F1 score which is the harmonic mean 
 
 <a name="improvements"></a>
 ## Further Improvements
+
+One of the areas that provided a great perfomance improvement was the preprocessing of the data. Each time a new addition was made in the preprocessing procedure, such as removing duplicate observations, removing extreme values or adding new features, a great improvement was achieved with the same models. Further additions to preprocessing could be enough for better results. For example, we have not tried dropping the features with high percentage of missing values and also extracting the most important features with a random forest and training only on that subset of features. 
+
+Also at this momment there is not hyperparameter tuning for the DNN, that could provide better results. Given that we used TensorFlow for the DNN implementation an easy way to achieve that would be Keras Tuner. Additionaly, we did not run cross-validation for DNN. With cross-validation, the model can use more training instances that will potentially improve the perfomance and will be validated on more observations that can improve the generalization of the model. 
+
+Finally, using an ensemble of the best models can provide better results. For example, a combination of Random Forest's and DNN's predictions can potentially give better final results.
+
+
+<a name="deployment"></a> 
+## Deployment 
 
 <a name="features"></a >
 ## Dataset Features
