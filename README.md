@@ -43,7 +43,7 @@ Because the dataset is heavily inbalanced between the two classes, using the acc
 * True Negative (TN): A negative observation that is predicted as negative
 * False Negative (FN):  A positive observation that is predicted as negative
 * True Positive (TP): A positive observation that is predicted as positive
-* False Positive (FP) A negative observation that is predicted as positive
+* False Positive (FP): A negative observation that is predicted as positive
 
 Using the above we can calculate the Precision and Recall of each model: 
 
@@ -57,8 +57,8 @@ Finally we can combine these two to get the F1 score which is the harmonic mean 
 | --- | --- | --- | --- | 
 | Linear Logistic Loss | 0.28 | 0.59 | 0.38
 | Support Vector Machine | 0.28 | 0.59 | 0.38
-| Support Vector Machine - Polynomial | 
-| Support Vector Machine - RBF |
+| Support Vector Machine - Polynomial | 0.27 | 0.73 | 0.40
+| Support Vector Machine - RBF | 0.27 | 0.70 | 0.39
 | Random Forest |
 | Dense Neural Network | 
 
