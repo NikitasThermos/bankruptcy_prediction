@@ -7,8 +7,9 @@ A machine learning project for predicting bankruptcy in the context of 'Data Min
 ## Table of Contents
 1. [Introduction](#introduction)
 2. [Dataset](#dataset)
-3. [Results](#results)
-4. [Dataset Features](#features)
+3. [Data Processing](#processing)
+4. [Results](#results)
+5. [Dataset Features](#features)
 
 <a name="introduction"></a>
 ## Introduction
@@ -25,15 +26,42 @@ The subset that we worked with contains data collected only from the first year 
 | Training | 6756 | 271 |  
 | Test |  3486 | 514 | 
 
-The main problems that we came across when working with the dataset include the following:
+Thus the problem can be thought as a binary classification task with the goal of each model being to correctly identify the label of each observation. While working with that dataset we came across some irregularities that either restricted the input of the data on most ML models or reduced the perfomance of the models. Some problems of the dataset include the following:
+
 * Missing Values
 * Outlier instances/values
 * Duplicate instances
 * Imbalanced classes
 * Small amount of training instances and features
 
+<a name="processing"></a>
+## Data Processing
+
 <a name="results"></a>
 ## Results
+Because the dataset is heavily inbalanced between the two classes, using the accuracy of the models' predictions as the main perfomance measure is not optimal. For example a model that only predicts every observation as the majority class. which is the negative class in our case, will have a 96% accuracy on this training set. For that reason we can use the Precision and Recall measures that indicate how accurate is the model when giving a positive prediction and how many positive observations can identify. To calculate these measures we need to categorize each prediction of a model based on the following: 
+* True Negative (TN): A negative observation that is predicted as negative
+* False Negative (FN):  A positive observation that is predicted as negative
+* True Positive (TP): A positive observation that is predicted as positive
+* False Positive (FP) A negative observation that is predicted as positive
+
+Using the above we can calculate the Precision and Recall of each model: 
+
+Precision = $\frac{TP}{TP + FP}$
+
+Recall = $\frac{TP}{TP + FN}$
+
+Finally we can combine these two to get the F1 score which is the harmonic mean of Precision and Recall. Based on these measures the perfomance of each moel is presented in the table below
+
+| Model | Precision | Recall | F1 | 
+| --- | --- | --- | --- | 
+| Linear Logistic Loss | 0.28 | 0.59 | 0.38
+| Support Vector Machine | 0.28 | 0.59 | 0.38
+| Support Vector Machine - Polynomial | 
+| Support Vector Machine - RBF |
+| Random Forest |
+| Dense Neural Network | 
+
 
 <a name="features"></a >
 ## Dataset Features
