@@ -9,7 +9,8 @@ A machine learning project for predicting bankruptcy in the context of 'Data Min
 2. [Dataset](#dataset)
 3. [Data Processing](#processing)
 4. [Results](#results)
-5. [Dataset Features](#features)
+5. [Further Improvements](#improvements)
+6. [Dataset Features](#features)
 
 <a name="introduction"></a>
 ## Introduction
@@ -60,8 +61,10 @@ Finally we can combine these two to get the F1 score which is the harmonic mean 
 | Support Vector Machine - Polynomial | 0.27 | 0.73 | 0.40
 | Support Vector Machine - RBF | 0.27 | 0.70 | 0.39
 | Random Forest | 0.63 | 0.44 | 0.52 
-| Dense Neural Network | 
+| Dense Neural Network | 0.56 | 0.52 | 0.54
 
+<a name="improvements"></a>
+## Further Improvements
 
 <a name="features"></a >
 ## Dataset Features
