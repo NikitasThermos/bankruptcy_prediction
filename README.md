@@ -97,6 +97,19 @@ Finally, using an ensemble of the best models can provide better results. For ex
 <a name="deployment"></a> 
 ## Deployment 
 
+You can clone the project locally with the following: 
+```bash
+git clone https://github.com/NikitasThermos/bankruptcy_prediction
+```
+Then there are two main ways to run it: 
+1. Jupyter Notebooks
+
+The whole preprocessing of the data and the models implementation is available at a notebook file [here](#bankruptcy-prediction.ipynb). You can run the notebook on Google Colab if you want to use additional computing resources. 
+
+2. Python Modules
+
+
+
 <a name="features"></a >
 ## Dataset Features
 
