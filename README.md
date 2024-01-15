@@ -108,7 +108,22 @@ The whole preprocessing of the data and the models implementation is available a
 
 2. Python Modules
 
+To run the python modules it is recommended to create a conda envirnonment with all the necessary dependencies. You can find [here](https://conda.io/projects/conda/en/latest/user-guide/install/index.html) instructions on how to install conda. You can create a conda environment named 'data_mining' using the [environment.yml](environment.yml) file as follows: 
+```bash
+conda env create -f environment.yml
+```
+The activate the environemnt: 
+```bash
+conda activate data_mining
+```
+Then you can run [main.py](main.py) file with the following options:
+|Option | Description | Values | Default | 
+| --- | --- | --- | --- |
+--model | The model to get results | all, LogLoss, SVM, RF, DNN | all
+--best_parameters | Skip training and use ready parameters | True/False | False
+--save_model | Save the parameters of the model after training | True/False | False
 
+The parameters that are used if you select the 'best_parameters' option can be found under the [parameters](parameters) folder. Also note that if you select to save a model it will replace the parameters under that folder.
 
 <a name="features"></a >
 ## Dataset Features
